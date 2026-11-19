@@ -191,8 +191,8 @@
    * --------------------------------------------------------------- */
   const PETS = [
     {
-      id: 'pet_01', name: '苔芽球', role: 'guardian', element: 'grass', rarity: 'R',
-      lore: '睡醒時頭頂會冒出新芽，最喜歡擋在大家前面。',
+      id: 'pet_01', name: '苔蘚龜龜', role: 'guardian', element: 'grass', rarity: 'R',
+      lore: '背上長滿軟軟的青苔，頭頂冒著一株小新芽，總是慢慢走到大家前面擋著。',
       base: { hp: 950, atk: 62, def: 85, aspd: 1.3, range: 1, block: 2, critRate: 5 },
       growth: { hp: 48, atk: 4.0, def: 4.5 },
       cost: 10,
@@ -221,8 +221,8 @@
       fallback: { color: '#8FA876', glyph: '苔' }
     },
     {
-      id: 'pet_02', name: '露滴鈴', role: 'healer', element: 'water', rarity: 'R',
-      lore: '搖一搖身上的露珠，清脆的鈴聲能撫平傷口。',
+      id: 'pet_02', name: '橡果盾寶', role: 'healer', element: 'water', rarity: 'R',
+      lore: '戴著橡果帽、揹著木頭小圓盾，會先替受傷的夥伴擋住風，再輕輕拍拍他們。',
       base: { hp: 520, atk: 75, def: 35, aspd: 2.2, range: 1.5, block: 0, critRate: 5 },
       growth: { hp: 24, atk: 4.2, def: 1.8 },
       cost: 9,
@@ -281,8 +281,8 @@
       fallback: { color: '#E2C27A', glyph: '羽' }
     },
     {
-      id: 'pet_04', name: '蓮葉龜', role: 'guardian', element: 'water', rarity: 'SR',
-      lore: '背著一整片蓮葉慢慢走，下雨天會替大家撐傘。',
+      id: 'pet_04', name: '泡泡水滴精', role: 'guardian', element: 'water', rarity: 'SR',
+      lore: '一顆會走路的水滴，懷裡抱著亮晶晶的泡泡，碰到的人都會覺得清涼起來。',
       base: { hp: 1150, atk: 70, def: 110, aspd: 1.5, range: 1, block: 3, critRate: 5 },
       growth: { hp: 60, atk: 4.0, def: 5.5 },
       cost: 14,
@@ -311,8 +311,8 @@
       fallback: { color: '#7FA6B8', glyph: '龜' }
     },
     {
-      id: 'pet_05', name: '螢燈鹿', role: 'healer', element: 'light', rarity: 'SR',
-      lore: '鹿角上掛著小螢火，迷路的夥伴都會跟著牠回家。',
+      id: 'pet_05', name: '洋甘菊羊咩', role: 'healer', element: 'light', rarity: 'SR',
+      lore: '捲捲羊毛裡開著幾朵洋甘菊，靠近時會聞到淡淡花香，讓人慢慢放鬆下來。',
       base: { hp: 600, atk: 88, def: 42, aspd: 2.0, range: 2, block: 0, critRate: 5 },
       growth: { hp: 28, atk: 4.8, def: 2.0 },
       cost: 13,
@@ -341,8 +341,8 @@
       fallback: { color: '#E2C27A', glyph: '鹿' }
     },
     {
-      id: 'pet_06', name: '蒲公英狐', role: 'ranged', element: 'grass', rarity: 'SSR',
-      lore: '尾巴是一大球蒲公英絨毛，打個噴嚏就會飄起一陣風。',
+      id: 'pet_06', name: '微光菇菇', role: 'ranged', element: 'grass', rarity: 'SSR',
+      lore: '頂著暖黃色的大菇傘、提著小燈籠，在昏暗的森林裡也能替大家照亮方向。',
       base: { hp: 540, atk: 150, def: 36, aspd: 1.25, range: 4, block: 0, critRate: 8 },
       growth: { hp: 25, atk: 7.5, def: 1.8 },
       cost: 16,
