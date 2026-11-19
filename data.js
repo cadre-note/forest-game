@@ -218,7 +218,7 @@
           }
         ]
       },
-      fallback: { color: '#8FA876', glyph: '苔' }
+      fallback: { color: '#8FA876', glyph: '龜' }
     },
     {
       id: 'pet_02', name: '橡果盾寶', role: 'healer', element: 'water', rarity: 'R',
@@ -248,7 +248,7 @@
           }
         ]
       },
-      fallback: { color: '#7FA6B8', glyph: '鈴' }
+      fallback: { color: '#7FA6B8', glyph: '橡' }
     },
     {
       id: 'pet_03', name: '晨光羽雀', role: 'ranged', element: 'light', rarity: 'SR',
@@ -308,7 +308,7 @@
           }
         ]
       },
-      fallback: { color: '#7FA6B8', glyph: '龜' }
+      fallback: { color: '#7FA6B8', glyph: '泡' }
     },
     {
       id: 'pet_05', name: '洋甘菊羊咩', role: 'healer', element: 'light', rarity: 'SR',
@@ -338,7 +338,7 @@
           }
         ]
       },
-      fallback: { color: '#E2C27A', glyph: '鹿' }
+      fallback: { color: '#E2C27A', glyph: '羊' }
     },
     {
       id: 'pet_06', name: '微光菇菇', role: 'ranged', element: 'grass', rarity: 'SSR',
@@ -368,7 +368,7 @@
           }
         ]
       },
-      fallback: { color: '#8FA876', glyph: '狐' }
+      fallback: { color: '#8FA876', glyph: '菇' }
     }
   ];
 
