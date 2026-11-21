@@ -16,7 +16,7 @@
    * --------------------------------------------------------------- */
   const META = {
     title: '晨露森旅',
-    dataVersion: '1.1.0',
+    dataVersion: '2.0.0',
     saveKey: 'morningdew_save_v1',   // localStorage key；改結構時升版並在 game.js 做遷移
     dailyResetHour: 4                // 每日任務／每日步數於本地時間 04:00 重置（避開 23:00 前後仍在玩的時段）
   };
@@ -32,29 +32,63 @@
       pet_03: ASSET_DIR + 'pet_03.png',
       pet_04: ASSET_DIR + 'pet_04.png',
       pet_05: ASSET_DIR + 'pet_05.png',
-      pet_06: ASSET_DIR + 'pet_06.png'
+      pet_06: ASSET_DIR + 'pet_06.png',
+      pet_07: ASSET_DIR + 'pet_07.png',
+      pet_08: ASSET_DIR + 'pet_08.png',
+      pet_09: ASSET_DIR + 'pet_09.png',
+      pet_10: ASSET_DIR + 'pet_10.png'
+    },
+    // 進化立繪：[一階 Lv.10, 二階 Lv.30]
+    petEvo: {
+      pet_01: [ASSET_DIR + 'pet_01_evo1.png', ASSET_DIR + 'pet_01_evo2.png'],
+      pet_02: [ASSET_DIR + 'pet_02_evo1.png', ASSET_DIR + 'pet_02_evo2.png'],
+      pet_03: [ASSET_DIR + 'pet_03_evo1.png', ASSET_DIR + 'pet_03_evo2.png'],
+      pet_04: [ASSET_DIR + 'pet_04_evo1.png', ASSET_DIR + 'pet_04_evo2.png'],
+      pet_05: [ASSET_DIR + 'pet_05_evo1.png', ASSET_DIR + 'pet_05_evo2.png'],
+      pet_06: [ASSET_DIR + 'pet_06_evo1.png', ASSET_DIR + 'pet_06_evo2.png'],
+      pet_07: [ASSET_DIR + 'pet_07_evo1.png', ASSET_DIR + 'pet_07_evo2.png'],
+      pet_08: [ASSET_DIR + 'pet_08_evo1.png', ASSET_DIR + 'pet_08_evo2.png'],
+      pet_09: [ASSET_DIR + 'pet_09_evo1.png', ASSET_DIR + 'pet_09_evo2.png'],
+      pet_10: [ASSET_DIR + 'pet_10_evo1.png', ASSET_DIR + 'pet_10_evo2.png']
     },
     enemies: {
       enemy_01: ASSET_DIR + 'enemy_01.png',
       enemy_02: ASSET_DIR + 'enemy_02.png',
       enemy_03: ASSET_DIR + 'enemy_03.png',
       enemy_04: ASSET_DIR + 'enemy_04.png',
-      enemy_05: ASSET_DIR + 'enemy_05.png'
+      enemy_05: ASSET_DIR + 'enemy_05.png',
+      enemy_06: ASSET_DIR + 'enemy_06.png',
+      enemy_07: ASSET_DIR + 'enemy_07.png',
+      enemy_08: ASSET_DIR + 'enemy_08.png',
+      enemy_09: ASSET_DIR + 'enemy_09.png'
     },
     materials: {
       mat_01: ASSET_DIR + 'mat_01.png',
       mat_02: ASSET_DIR + 'mat_02.png',
       mat_03: ASSET_DIR + 'mat_03.png'
     },
+    items: {
+      item_exp_berry:   ASSET_DIR + 'item_exp_berry.png',
+      item_evo_stone:   ASSET_DIR + 'item_evo_stone.png',
+      item_shiny_charm: ASSET_DIR + 'item_shiny_charm.png'
+    },
     equipment: {
       eq_01: ASSET_DIR + 'eq_01.png',
       eq_02: ASSET_DIR + 'eq_02.png',
       eq_03: ASSET_DIR + 'eq_03.png'
     },
+    props: {
+      trailChest: ASSET_DIR + 'trail_chest.png',
+      campBottle: ASSET_DIR + 'camp_bottle.png',
+      campBasket: ASSET_DIR + 'camp_basket.png'
+    },
     backgrounds: {
-      camp:   ASSET_DIR + 'bg_camp.png',
-      map:    ASSET_DIR + 'bg_map.png',
-      battle: ASSET_DIR + 'bg_battle.png'
+      camp:       ASSET_DIR + 'bg_camp.png',
+      map:        ASSET_DIR + 'bg_map.png',
+      trail:      ASSET_DIR + 'bg_trail.png',
+      battle:     ASSET_DIR + 'bg_battle.png',
+      battle_ch2: ASSET_DIR + 'bg_battle_ch2.png',
+      battle_ch3: ASSET_DIR + 'bg_battle_ch3.png'
     }
   };
 
@@ -78,13 +112,21 @@
   const RARITIES = {
     R:   { name: 'R',   color: '#A9B5A0', dupExpAfterMaxStar: 300 },
     SR:  { name: 'SR',  color: '#8DB3C7', dupExpAfterMaxStar: 600 },
-    SSR: { name: 'SSR', color: '#E0B866', dupExpAfterMaxStar: 1500 }
+    SSR: { name: 'SSR', color: '#E0B866', dupExpAfterMaxStar: 1500 },
+    UR:  { name: 'UR',  label: '傳說', color: '#C9A8E8', dupExpAfterMaxStar: 3000 }
   };
 
   const CURRENCIES = {
     dew:          { name: '森林露水', desc: '由步數轉換，用於召喚與餵養。' },
     coins:        { name: '星塵',     desc: '戰鬥與任務取得，用於升級建築與合成。（程式內部 key 為 coins）' },
     summonTicket: { name: '召喚葉籤', desc: '可免費召喚 1 次（不消耗露水）。' }
+  };
+
+  // 道具（存檔 key：items）
+  const ITEMS = {
+    item_exp_berry:   { name: '元氣森果',     desc: '直接餵給精靈，EXP +300。', expGain: 300, fallback: { color: '#E59A8C', glyph: '果' } },
+    item_evo_stone:   { name: '森之進化晶石', desc: 'Lv.10 一階進化需要 1 顆，Lv.30 二階進化需要 3 顆。', fallback: { color: '#8FC2A0', glyph: '晶' } },
+    item_shiny_charm: { name: '星願幸運草',   desc: '使用後，下一次召喚每顆蛋的閃光機率提高到 20%。', fallback: { color: '#F2CF6E', glyph: '草' } }
   };
 
   const MATERIALS = {
@@ -110,10 +152,46 @@
     costDew: 10,               // 單抽 10 露水（孵化巢可降低，見 CAMP_BUILDINGS）
     multiCount: 10,            // 十連
     multiCostDew: 95,          // 十連 95 露水（約 95 折）
-    rates: { R: 55, SR: 36, SSR: 9 },             // 基礎機率 %，加總 100
-    poolByRarity: { R: ['pet_01', 'pet_02'], SR: ['pet_03', 'pet_04', 'pet_05'], SSR: ['pet_06'] },
-    pitySSR: 40,               // 連續 40 抽未出 SSR，第 40 抽必定 SSR
+    rates: { R: 55, SR: 36, SSR: 7, UR: 2 },      // 基礎機率 %，加總 100（UR＝傳說）
+    poolByRarity: {
+      R:   ['pet_01', 'pet_02', 'pet_08'],
+      SR:  ['pet_03', 'pet_04', 'pet_05', 'pet_07', 'pet_09'],
+      SSR: ['pet_06'],
+      UR:  ['pet_10']
+    },
+    pitySSR: 40,               // 連續 40 抽未出 SSR 以上，第 40 抽必定 SSR 或 UR（依 7:2 權重）
     multiGuaranteeSR: true     // 十連保底至少 1 隻 SR 以上
+  };
+
+  // 閃光異色：每顆蛋獨立判定；用星願幸運草後「下一次召喚」整批提升機率
+  const SHINY = {
+    name: '晨光閃光',
+    ratePct: 5,
+    charmRatePct: 20,
+    statBonusPct: 10,          // 全屬性 +10%
+    dupUpgrades: true          // 已有一般版時抽到閃光版：升級為閃光並照常得到 1 碎片
+  };
+
+  // 進化（與轉職合併）：Lv.10 消耗晶石一階進化並同時選擇轉職路線；Lv.30 二階進化為最終形態
+  const EVOLUTION = {
+    stages: [
+      { stage: 1, lv: 10, cost: { items: { item_evo_stone: 1 } }, statMul: 1.10, chooseBranch: true,
+        desc: '一階進化：消耗 1 顆進化晶石，同時選擇轉職路線（另需該精靈的轉職素材）' },
+      { stage: 2, lv: 30, cost: { coins: 6000, items: { item_evo_stone: 3 }, mats: { mat_01: 15, mat_02: 15, mat_03: 15 } }, statMul: 1.25,
+        desc: '二階進化：消耗 3 顆進化晶石，成為最終形態（全屬性共 +25%）' }
+    ],
+    forms: {
+      pet_01: ['花園城堡龜', '櫻花古堡龜'],
+      pet_02: ['橡葉騎士', '黃金橡果聖騎'],
+      pet_03: ['晨光啾啾', '曙光天鵝'],
+      pet_04: ['冰晶水滴精', '霜晶水靈'],
+      pet_05: ['花環鈴鐺羊', '花冠鈴音羊'],
+      pet_06: ['金燈菇菇', '星夜魔菇'],
+      pet_07: ['冰晶狐寶', '九尾星霜狐'],
+      pet_08: ['茶壺松鼠', '秋楓茶會松鼠'],
+      pet_09: ['雛菊刺蝟', '日冕花刺蝟'],
+      pet_10: ['月輝鹿靈', '星虹月鹿']
+    }
   };
 
   // 重複精靈 → 星級突破（★1 為初次取得，最高 ★5）
@@ -126,7 +204,7 @@
   // 等級：上限 30；EXP_TO_NEXT[i] = 從 Lv(i+1) 升到 Lv(i+2) 所需經驗
   const LEVEL_RULES = {
     maxLevel: 30,
-    classChangeLevel: 10,
+    classChangeLevel: 10,        // ＝ 一階進化等級（見 EVOLUTION）
     expToNext: [80, 130, 210, 290, 390, 490, 610, 730, 860, 1000,
                 1140, 1300, 1460, 1620, 1790, 1970, 2150, 2340, 2530, 2730,
                 2940, 3150, 3360, 3580, 3800, 4030, 4260, 4490, 4740]
@@ -137,22 +215,7 @@
    * 4. 戰鬥規則（輕塔防）
    * --------------------------------------------------------------- */
   const BATTLE_RULES = {
-    /* 直式 S 型路徑戰場：座標皆為 bg_battle.png 的百分比（x%, y%），戰場容器依背景圖原始比例等比縮放 */
-    path: [
-      [50, 2], [49, 10], [54, 20], [53, 30], [34, 38], [22, 46],
-      [46, 54], [74, 62], [68, 70], [52, 78], [49, 86], [49, 94]   // 最後一點＝木門營地（終點）
-    ],
-    // 守護型：部署在泥土路徑轉角，會阻擋經過的怪物（pathIndex 對應 path 的點）
-    guardianSpots: [
-      { id: 'g1', pathIndex: 2 }, { id: 'g2', pathIndex: 3 }, { id: 'g3', pathIndex: 5 },
-      { id: 'g4', pathIndex: 7 }, { id: 'g5', pathIndex: 9 }
-    ],
-    // 遠程／療癒型：部署在路徑兩側的 6 塊手繪草地方塊
-    supportSpots: [
-      { id: 's1', name: '左上', x: 25, y: 16 }, { id: 's2', name: '右上', x: 76, y: 17 },
-      { id: 's3', name: '右中', x: 75, y: 44 }, { id: 's4', name: '左下', x: 24, y: 64 },
-      { id: 's5', name: '左偏下', x: 24, y: 81 }, { id: 's6', name: '右下', x: 75, y: 83 }   // 依 bg_battle.png 實測草地中心
-    ],
+    /* 戰場地形依章節而異：見 BATTLEFIELDS（座標皆為背景圖百分比） */
     // 距離換算（以戰場「寬度」的百分比為 1 單位）
     rangeUnitPct: { ranged: 13, healer: 22, guardian: 12 },  // 射程 3 的遠程 ≈ 39% 寬；療癒半徑 1.5 ≈ 33% 寬
     speedUnitPct: 20,                    // 怪物 speed 1.0 = 每秒走戰場寬度的 20%（整條路約 2.4 個寬度）
@@ -160,6 +223,8 @@
     shockRadiusPct: 30,                  // 雷雲王震盪半徑（1.5）換算後 ≈ 戰場寬 30%
     knockbackPct: 10,                    // 擊退 1 格 ≈ 沿路徑後退戰場寬 10%
     teamSize: 4,                         // 出戰前最多挑 4 隻
+    guardSnapPct: 4,                     // 守護點距離某條路徑 ≤ 戰場寬 4% 時，視為能阻擋該路徑
+    autoSkill: { defaultOn: false },     // 右上角 AUTO：能量滿自動施放主動技
     lives: 5,                            // 泉水之心；一般怪漏 1 隻扣 1，Boss 扣 3
     energy: { start: 10, regenPerSec: 1, max: 60 },
     maxDeployed: 4,
@@ -181,13 +246,65 @@
   };
 
   /* ---------------------------------------------------------------
-   * 5. PETS — 6 隻初始精靈
-   * 數值為 Lv.1、★1；每級增加 growth；轉職後乘上分支 statMul。
+   * 4-1. BATTLEFIELDS — 各章節戰場地形
+   * paths：可有多條（lane 0 走第 1 條、lane 2 走第 2 條、lane 1 輪流）；最後一點為終點
+   * guardianSpots：守護型部署點（在路徑上，會阻擋經過的怪物）
+   * supportSpots：遠程／療癒部署點；springSpots：任何職業可站，每秒回復 HP
+   * paintedTiles：背景圖是否已畫好草地方塊（否則顯示柔和草墊標記）
+   * --------------------------------------------------------------- */
+  const BATTLEFIELDS = {
+    ch1: {
+      name: '晨露草原', bg: 'battle', paintedTiles: true, weather: null,
+      paths: [
+        [[50, 2], [49, 10], [54, 20], [53, 30], [34, 38], [22, 46], [46, 54], [74, 62], [68, 70], [52, 78], [49, 86], [49, 94]]
+      ],
+      guardianSpots: [{ id: 'g1', x: 54, y: 20 }, { id: 'g2', x: 53, y: 30 }, { id: 'g3', x: 22, y: 46 }, { id: 'g4', x: 74, y: 62 }, { id: 'g5', x: 52, y: 78 }],
+      supportSpots: [
+        { id: 's1', x: 25, y: 16 }, { id: 's2', x: 76, y: 17 }, { id: 's3', x: 75, y: 44 },
+        { id: 's4', x: 24, y: 64 }, { id: 's5', x: 24, y: 81 }, { id: 's6', x: 75, y: 83 }
+      ],
+      springSpots: []
+    },
+    ch2: {
+      name: '迷霧苔原', bg: 'battle_ch2', paintedTiles: false, weather: null,
+      // 左上、右上兩條小徑在草地中央合流，再一起走向下方出口
+      paths: [
+        [[31, 31], [35, 36], [39, 40], [33, 45], [25, 49], [23, 53], [26, 60], [37, 68], [50, 75], [50, 86], [50, 97]],
+        [[64, 28], [61, 34], [65, 39], [71, 42], [78, 46], [81, 51], [77, 56], [70, 61], [60, 69], [50, 75], [50, 86], [50, 97]]
+      ],
+      guardianSpots: [{ id: 'g1', x: 39, y: 40 }, { id: 'g2', x: 24, y: 52 }, { id: 'g3', x: 80, y: 50 }, { id: 'g4', x: 50, y: 76 }, { id: 'g5', x: 50, y: 88 }],
+      supportSpots: [
+        { id: 's1', x: 50, y: 44 }, { id: 's2', x: 49, y: 59 }, { id: 's3', x: 22, y: 73 },
+        { id: 's4', x: 77, y: 72 }, { id: 's5', x: 34, y: 83 }, { id: 's6', x: 66, y: 83 }
+      ],
+      // 左側合流處的微光泉水格：任何職業可站，站上去每秒回復 3% 最大 HP（守護站這裡也能阻擋左路）
+      springSpots: [{ id: 'w1', x: 27, y: 61, name: '微光泉水', healPctPerSec: 3 }]
+    },
+    ch3: {
+      name: '雷雲山谷', bg: 'battle_ch3', paintedTiles: false,
+      weather: { id: 'static', name: '靜電天氣', desc: '空氣劈啪作響，水屬性精靈攻速 +15%', element: 'water', aspdPct: 15 },
+      // 短直衝路：比前兩章更短，怪物更快抵達營地
+      paths: [
+        [[57, 29], [44, 34], [45, 37], [53, 39], [60, 42], [62, 46], [60, 49], [55, 52], [50, 57], [49, 63], [49, 80], [48, 86], [50, 92], [50, 97]]
+      ],
+      guardianSpots: [{ id: 'g1', x: 44, y: 35 }, { id: 'g2', x: 62, y: 46 }, { id: 'g3', x: 50, y: 57 }, { id: 'g4', x: 49, y: 72 }, { id: 'g5', x: 49, y: 86 }],
+      supportSpots: [
+        { id: 's1', x: 30, y: 45 }, { id: 's2', x: 75, y: 56 }, { id: 's3', x: 28, y: 60 },
+        { id: 's4', x: 72, y: 72 }, { id: 's5', x: 28, y: 75 }, { id: 's6', x: 75, y: 39 }
+      ],
+      springSpots: []
+    }
+  };
+
+  /* ---------------------------------------------------------------
+   * 5. PETS — 10 隻精靈
+   * 數值為 Lv.1、★1；每級增加 growth；進化乘上 EVOLUTION.statMul，轉職分支再乘 statMul，閃光再 +10%。
+   * trait：天生特性（不需轉職）— onHitSlow / onHitDefDown / energyRegen。
    * range：射程單位，實際半徑 = range × BATTLE_RULES.rangeUnitPct[職業]（% 戰場寬）；守護優先攻擊自己阻擋的怪物。
    * aspd：攻擊／治療間隔（秒），越小越快。
    * 技能 effects 型別（game.js 需實作）：
    *   buff{stat,pct} / block{add} / heal{atkPct} / hot{maxHpPct,tick} / damage{atkPct}
-   *   stun{sec} / knockback{cells} / slow{pct,sec} / dmgReduce{pct} / energy{add} / aspd{mul}
+   *   stun{sec} / knockback{cells} / slow{pct,sec} / dmgReduce{pct} / energy{add} / aspd{mul} / defDown{pct,sec}
    * --------------------------------------------------------------- */
   const PETS = [
     {
@@ -251,8 +368,8 @@
       fallback: { color: '#7FA6B8', glyph: '橡' }
     },
     {
-      id: 'pet_03', name: '晨光羽雀', role: 'ranged', element: 'light', rarity: 'SR',
-      lore: '第一道晨光落下時才會醒來，羽毛會折射出小光箭。',
+      id: 'pet_03', name: '蒲公英啾啾', role: 'ranged', element: 'light', rarity: 'SR',
+      lore: '頭頂長著一撮蒲公英絨毛的小雛鳥，拍拍翅膀就會射出閃亮的小光箭。',
       base: { hp: 480, atk: 128, def: 32, aspd: 1.1, range: 3, block: 0, critRate: 10 },
       growth: { hp: 22, atk: 6.5, def: 1.6 },
       cost: 12,
@@ -278,7 +395,7 @@
           }
         ]
       },
-      fallback: { color: '#E2C27A', glyph: '羽' }
+      fallback: { color: '#E2C27A', glyph: '啾' }
     },
     {
       id: 'pet_04', name: '泡泡水滴精', role: 'guardian', element: 'water', rarity: 'SR',
@@ -369,11 +486,103 @@
         ]
       },
       fallback: { color: '#8FA876', glyph: '菇' }
+    },
+    {
+      id: 'pet_07', name: '星霜狐寶', role: 'ranged', element: 'water', rarity: 'SR',
+      lore: '尾巴像一團結霜的雲，呼一口氣就會飄下細細的冰晶，讓怪物慢下腳步。',
+      base: { hp: 470, atk: 112, def: 34, aspd: 1.2, range: 3, block: 0, critRate: 8 },
+      growth: { hp: 21, atk: 5.8, def: 1.6 },
+      cost: 12,
+      trait: { type: 'onHitSlow', pct: 15, sec: 1.5, desc: '普攻使怪物緩速 15%（1.5 秒）' },
+      skill: {
+        id: 'sk_frost_breath', name: '霜晶吐息', cd: 20, initialCd: 7, duration: 0, target: 'enemiesInRange',
+        desc: '對射程內所有怪物造成攻擊力 120% 傷害，緩速 45%（5 秒）並凍住 1 秒。',
+        effects: [{ type: 'damage', atkPct: 120 }, { type: 'slow', pct: 45, sec: 5 }, { type: 'stun', sec: 1 }]
+      },
+      classChange: {
+        cost: { coins: 2500, mats: { mat_02: 10, mat_03: 6 } },
+        branches: [
+          { id: 'pet_07_a', name: '冰封術士', desc: '控場特化：技能凍結延長為 2.5 秒，攻擊 +10%。',
+            statMul: { atk: 1.10 }, skillMod: { effectOverride: { stun: { sec: 2.5 } } }, passive: { type: 'none' } },
+          { id: 'pet_07_b', name: '霜雪巡風', desc: '大範圍緩速：射程 +1，技能緩速提高到 60%。',
+            statMul: { hp: 1.10 }, skillMod: { effectOverride: { slow: { pct: 60 } } }, passive: { type: 'rangeAdd', add: 1 } }
+        ]
+      },
+      fallback: { color: '#A9CFE0', glyph: '狐' }
+    },
+    {
+      id: 'pet_08', name: '茶芽松鼠', role: 'guardian', element: 'grass', rarity: 'R',
+      lore: '抱著熱茶杯到處泡茶的小松鼠，在場上時會慢慢替大家攢下部署能量。',
+      base: { hp: 760, atk: 70, def: 60, aspd: 1.1, range: 1, block: 1, critRate: 5 },
+      growth: { hp: 38, atk: 4.2, def: 3.2 },
+      cost: 7,
+      trait: { type: 'energyRegen', add: 0.4, desc: '先鋒：在場時露珠能量每秒 +0.4' },
+      skill: {
+        id: 'sk_warm_tea', name: '暖茶補給', cd: 16, initialCd: 4, duration: 6, target: 'self',
+        desc: '立即回復 8 點部署能量，6 秒內自身防禦 +30%。',
+        effects: [{ type: 'energy', add: 8 }, { type: 'buff', stat: 'def', pct: 30 }]
+      },
+      classChange: {
+        cost: { coins: 1500, mats: { mat_01: 10, mat_02: 4 } },
+        branches: [
+          { id: 'pet_08_a', name: '森林茶師', desc: '產費特化：在場時能量每秒再 +0.3，HP +10%。',
+            statMul: { hp: 1.10 }, skillMod: {}, passive: { type: 'energyRegen', add: 0.3 } },
+          { id: 'pet_08_b', name: '先鋒松鼠', desc: '前線先鋒：阻擋數 +1，攻擊 +20%、防禦 +10%。',
+            statMul: { atk: 1.20, def: 1.10 }, skillMod: {}, passive: { type: 'blockAdd', add: 1 } }
+        ]
+      },
+      fallback: { color: '#B9875A', glyph: '鼠' }
+    },
+    {
+      id: 'pet_09', name: '暖陽刺蝟', role: 'ranged', element: 'light', rarity: 'SR',
+      lore: '背上的刺開滿了小雛菊，曬飽太陽後射出的暖光刺能讓怪物的硬殼鬆軟下來。',
+      base: { hp: 520, atk: 104, def: 40, aspd: 1.4, range: 2.5, block: 0, critRate: 6 },
+      growth: { hp: 24, atk: 5.2, def: 2.0 },
+      cost: 11,
+      trait: { type: 'onHitDefDown', pct: 15, sec: 3, desc: '普攻使怪物防禦 −15%（3 秒）' },
+      skill: {
+        id: 'sk_sun_spines', name: '暖陽刺光', cd: 22, initialCd: 8, duration: 0, target: 'enemiesInRange',
+        desc: '對射程內所有怪物造成攻擊力 150% 傷害，並使其防禦 −40%（8 秒）。',
+        effects: [{ type: 'damage', atkPct: 150 }, { type: 'defDown', pct: 40, sec: 8 }]
+      },
+      classChange: {
+        cost: { coins: 2500, mats: { mat_03: 10, mat_01: 6 } },
+        branches: [
+          { id: 'pet_09_a', name: '日冕刺蝟', desc: '破甲特化：技能降防提高到 55%，攻擊 +10%。',
+            statMul: { atk: 1.10 }, skillMod: { effectOverride: { defDown: { pct: 55 } } }, passive: { type: 'none' } },
+          { id: 'pet_09_b', name: '花刺守望', desc: '群體輸出：普攻同時命中 2 個目標（每個 80% 傷害），HP +10%。',
+            statMul: { hp: 1.10 }, skillMod: {}, passive: { type: 'multiTarget', targets: 2, dmgPct: 80 } }
+        ]
+      },
+      fallback: { color: '#EDB98A', glyph: '蝟' }
+    },
+    {
+      id: 'pet_10', name: '月光鹿靈', role: 'healer', element: 'light', rarity: 'UR',
+      lore: '只在滿月的夜裡現身的傳說小鹿，鹿角的月光能同時灼退怪物、撫平夥伴的傷。',
+      base: { hp: 680, atk: 120, def: 46, aspd: 1.8, range: 2, block: 0, critRate: 10 },
+      growth: { hp: 30, atk: 6.5, def: 2.2 },
+      cost: 17,
+      skill: {
+        id: 'sk_moon_flow', name: '月華流轉', cd: 26, initialCd: 10, duration: 0, target: 'enemiesInRange',
+        desc: '對範圍內所有怪物造成攻擊力 200% 傷害，同時治療全場夥伴（攻擊力 150%）。',
+        effects: [{ type: 'damage', atkPct: 200 }, { type: 'heal', atkPct: 150, target: 'allAllies' }]
+      },
+      classChange: {
+        cost: { coins: 4000, mats: { mat_03: 15, mat_02: 10 } },
+        branches: [
+          { id: 'pet_10_a', name: '滿月祭司', desc: '頻率特化：技能冷卻 −5 秒，攻擊 +15%。',
+            statMul: { atk: 1.15 }, skillMod: { cdAdd: -5 }, passive: { type: 'none' } },
+          { id: 'pet_10_b', name: '星虹鹿神', desc: '全隊守護：在場時全場夥伴防禦 +10%，HP +15%。',
+            statMul: { hp: 1.15 }, skillMod: {}, passive: { type: 'auraBuff', stat: 'def', pct: 10, target: 'allAllies' } }
+        ]
+      },
+      fallback: { color: '#F0DDB0', glyph: '鹿' }
     }
   ];
 
   /* ---------------------------------------------------------------
-   * 6. ENEMIES — 5 種怪物（數值為關卡倍率 1.0 時）
+   * 6. ENEMIES — 9 種怪物（數值為關卡倍率 1.0 時）
+   * flying：無視地面阻擋，守護型的普攻打不到，只受遠程／療癒的攻擊與技能控場影響
    * speed：路徑速度單位（× BATTLE_RULES.speedUnitPct）；atkInterval：秒；leakDamage：漏怪扣的泉水之心
    * --------------------------------------------------------------- */
   const ENEMIES = [
@@ -430,6 +639,47 @@
         drops: [{ id: 'mat_01', chance: 100, n: 3 }, { id: 'mat_02', chance: 100, n: 3 }, { id: 'mat_03', chance: 100, n: 3 }]
       },
       fallback: { color: '#8C8FA8', glyph: '雷' }
+    },
+    {
+      id: 'enemy_06', name: '飛行蒲公英', type: '飛行', element: 'grass',
+      desc: '乘著風飄過來的絨毛球，守護型擋不住，只能靠遠程與控場。',
+      stats: { hp: 260, atk: 0, def: 8, speed: 0.5, atkInterval: 9 },
+      leakDamage: 1, isBoss: false, flying: true,
+      special: null,
+      rewards: { coins: 6, drops: [{ id: 'mat_03', chance: 15, n: 1 }] },
+      fallback: { color: '#EFE6CF', glyph: '絨' }
+    },
+    {
+      id: 'enemy_07', name: '分裂果凍怪', type: '分裂', element: 'water',
+      desc: '彈呀彈的果凍，被擊敗時會啪一聲分成 2 隻小果凍。',
+      stats: { hp: 420, atk: 32, def: 6, speed: 0.33, atkInterval: 1.4 },
+      leakDamage: 1, isBoss: false,
+      special: { type: 'split', count: 2, childHpPct: 35, childAtkPct: 60, childSize: 0.65, childCoins: 2 },
+      rewards: { coins: 6, drops: [{ id: 'mat_02', chance: 15, n: 1 }] },
+      fallback: { color: '#9FE0C2', glyph: '凍' }
+    },
+    {
+      id: 'enemy_08', name: '護盾岩龜', type: '護盾', element: 'light',
+      desc: '背著能量泡泡的岩石龜，護盾破掉前受到的傷害大幅降低。',
+      stats: { hp: 900, atk: 50, def: 55, speed: 0.2, atkInterval: 2.0 },
+      leakDamage: 1, isBoss: false,
+      // 護盾值 = 最大 HP 的 50%；護盾存在時受到的傷害 −70%，打掉護盾值後消失
+      special: { type: 'shield', shieldPct: 50, reducePct: 70 },
+      rewards: { coins: 12, drops: [{ id: 'mat_01', chance: 25, n: 1 }, { id: 'mat_03', chance: 10, n: 1 }] },
+      fallback: { color: '#A99F8B', glyph: '盾' }
+    },
+    {
+      id: 'enemy_09', name: '古木樹樁', type: 'Boss', element: 'grass',
+      desc: '頭頂長滿蘑菇的老樹樁，每隔一陣子就喚來一群小栗球。第 2 章關底 Boss。',
+      stats: { hp: 12000, atk: 110, def: 70, speed: 0.13, atkInterval: 2.2 },
+      leakDamage: 3, isBoss: true,
+      // 每 10 秒召喚 2 隻小栗球；HP ≤ 40% 時每 7 秒召喚 3 隻
+      special: { type: 'summon', enemy: 'enemy_02', interval: 12, count: 1, enrage: { hpPctBelow: 40, interval: 9, count: 2 } },
+      rewards: {
+        coins: 220,
+        drops: [{ id: 'mat_01', chance: 100, n: 4 }, { id: 'mat_02', chance: 100, n: 3 }, { id: 'mat_03', chance: 100, n: 3 }]
+      },
+      fallback: { color: '#9C8A62', glyph: '樁' }
     }
   ];
 
@@ -437,7 +687,7 @@
   const ELITE_MODIFIER = { hpMul: 2.0, atkMul: 1.5, defMul: 1.2, coinsMul: 3, dropChanceMul: 2, scale: 1.3 };
 
   /* ---------------------------------------------------------------
-   * 7. CHAPTERS — 3 章 15 關＋無盡模式
+   * 7. CHAPTERS — 3 章 15 關＋無盡模式（battlefield 指向 BATTLEFIELDS）
    * waves[].delay：第 1 波＝開戰後幾秒；之後＝前一波「最後一隻出場」後幾秒
    * spawns[]：{ e: 怪物 id, lane: 0~2（單一路徑上的左右微偏移）, n: 數量, gap: 間隔秒, at: 該波開始後幾秒開始出, elite?, hpMul? }
    * statMul：本關怪物 HP/ATK/DEF 共同倍率；困難模式再乘上 difficulty.hard
@@ -452,15 +702,38 @@
 
   const CHAPTERS = [
     {
-      id: 'ch1', name: '晨霧草原', desc: '晨霧還沒散去的草原，小怪物們剛睡醒。', background: 'battle',
+      id: 'ch1',
+      name: '晨露草原',
+      desc: '晨霧還沒散去的草原，小怪物們剛睡醒。',
       stages: [
         {
-          id: '1-1', name: '露珠小徑', pos: { x: 70, y: 76 }, statMul: 1.00, recommendLv: 1, costCap: 30,
+          id: '1-1',
+          name: '露珠小徑',
+          pos: { x: 70, y: 76 },
+          statMul: 1,
+          recommendLv: 1,
+          costCap: 30,
           tip: '把守護型精靈放在怪物會經過的路線上擋住牠們。',
           waves: [
-            { delay: 5, spawns: [{ e: 'enemy_01', lane: 1, n: 3, gap: 4, at: 0 }] },
-            { delay: 8, spawns: [{ e: 'enemy_01', lane: 1, n: 4, gap: 3, at: 0 }] },
-            { delay: 8, spawns: [{ e: 'enemy_01', lane: 0, n: 2, gap: 3, at: 0 }, { e: 'enemy_01', lane: 2, n: 2, gap: 3, at: 1.5 }] }
+            {
+              delay: 5,
+              spawns: [
+                { e: 'enemy_01', lane: 1, n: 3, gap: 4, at: 0 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_01', lane: 1, n: 4, gap: 3, at: 0 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_01', lane: 0, n: 2, gap: 3, at: 0 },
+                { e: 'enemy_01', lane: 2, n: 2, gap: 3, at: 1.5 }
+              ]
+            }
           ],
           rewards: {
             clear: { coins: 80, exp: 60 },
@@ -469,13 +742,39 @@
           }
         },
         {
-          id: '1-2', name: '蒲公英坡', pos: { x: 38, y: 64 }, statMul: 1.05, recommendLv: 2, costCap: 34,
+          id: '1-2',
+          name: '蒲公英坡',
+          pos: { x: 38, y: 64 },
+          statMul: 1.05,
+          recommendLv: 2,
+          costCap: 34,
           tip: '小栗球跑很快，遠程精靈放在前段比較打得到。',
           waves: [
-            { delay: 5, spawns: [{ e: 'enemy_01', lane: 1, n: 3, gap: 3.5, at: 0 }] },
-            { delay: 7, spawns: [{ e: 'enemy_02', lane: 0, n: 3, gap: 2, at: 0 }] },
-            { delay: 7, spawns: [{ e: 'enemy_01', lane: 1, n: 3, gap: 3, at: 0 }, { e: 'enemy_02', lane: 2, n: 3, gap: 2, at: 2 }] },
-            { delay: 8, spawns: [{ e: 'enemy_02', lane: 1, n: 4, gap: 1.5, at: 0 }] }
+            {
+              delay: 5,
+              spawns: [
+                { e: 'enemy_01', lane: 1, n: 3, gap: 3.5, at: 0 }
+              ]
+            },
+            {
+              delay: 7,
+              spawns: [
+                { e: 'enemy_02', lane: 0, n: 3, gap: 2, at: 0 }
+              ]
+            },
+            {
+              delay: 7,
+              spawns: [
+                { e: 'enemy_01', lane: 1, n: 3, gap: 3, at: 0 },
+                { e: 'enemy_02', lane: 2, n: 3, gap: 2, at: 2 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_02', lane: 1, n: 4, gap: 1.5, at: 0 }
+              ]
+            }
           ],
           rewards: {
             clear: { coins: 90, exp: 65 },
@@ -484,13 +783,42 @@
           }
         },
         {
-          id: '1-3', name: '薄霧溪畔', pos: { x: 64, y: 48 }, statMul: 1.10, recommendLv: 3, costCap: 38,
+          id: '1-3',
+          name: '薄霧溪畔',
+          pos: { x: 64, y: 48 },
+          statMul: 1.1,
+          recommendLv: 3,
+          costCap: 38,
           tip: '霧氣一團接一團湧來，把守護分散在不同轉角層層攔截。',
           waves: [
-            { delay: 5, spawns: [{ e: 'enemy_01', lane: 0, n: 2, gap: 3, at: 0 }, { e: 'enemy_01', lane: 2, n: 2, gap: 3, at: 0 }] },
-            { delay: 7, spawns: [{ e: 'enemy_01', lane: 1, n: 4, gap: 2.5, at: 0 }] },
-            { delay: 7, spawns: [{ e: 'enemy_02', lane: 0, n: 3, gap: 1.8, at: 0 }, { e: 'enemy_01', lane: 1, n: 2, gap: 3, at: 1 }] },
-            { delay: 8, spawns: [{ e: 'enemy_01', lane: 0, n: 2, gap: 2.5, at: 0 }, { e: 'enemy_01', lane: 1, n: 2, gap: 2.5, at: 0.5 }, { e: 'enemy_01', lane: 2, n: 2, gap: 2.5, at: 1 }] }
+            {
+              delay: 5,
+              spawns: [
+                { e: 'enemy_01', lane: 0, n: 2, gap: 3, at: 0 },
+                { e: 'enemy_01', lane: 2, n: 2, gap: 3, at: 0 }
+              ]
+            },
+            {
+              delay: 7,
+              spawns: [
+                { e: 'enemy_01', lane: 1, n: 4, gap: 2.5, at: 0 }
+              ]
+            },
+            {
+              delay: 7,
+              spawns: [
+                { e: 'enemy_02', lane: 0, n: 3, gap: 1.8, at: 0 },
+                { e: 'enemy_01', lane: 1, n: 2, gap: 3, at: 1 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_01', lane: 0, n: 2, gap: 2.5, at: 0 },
+                { e: 'enemy_01', lane: 1, n: 2, gap: 2.5, at: 0.5 },
+                { e: 'enemy_01', lane: 2, n: 2, gap: 2.5, at: 1 }
+              ]
+            }
           ],
           rewards: {
             clear: { coins: 100, exp: 70 },
@@ -499,13 +827,42 @@
           }
         },
         {
-          id: '1-4', name: '小栗樹叢', pos: { x: 45, y: 33 }, statMul: 1.18, recommendLv: 5, costCap: 42,
+          id: '1-4',
+          name: '小栗樹叢',
+          pos: { x: 45, y: 33 },
+          statMul: 1.18,
+          recommendLv: 5,
+          costCap: 42,
           tip: '大量小栗球衝鋒！善用技能一口氣清場。',
           waves: [
-            { delay: 5, spawns: [{ e: 'enemy_02', lane: 1, n: 4, gap: 1.5, at: 0 }] },
-            { delay: 6, spawns: [{ e: 'enemy_02', lane: 0, n: 3, gap: 1.5, at: 0 }, { e: 'enemy_02', lane: 2, n: 3, gap: 1.5, at: 0.8 }] },
-            { delay: 7, spawns: [{ e: 'enemy_01', lane: 1, n: 3, gap: 3, at: 0 }, { e: 'enemy_02', lane: 1, n: 3, gap: 1.5, at: 4 }] },
-            { delay: 7, spawns: [{ e: 'enemy_02', lane: 0, n: 3, gap: 1.2, at: 0 }, { e: 'enemy_02', lane: 1, n: 3, gap: 1.2, at: 0.4 }, { e: 'enemy_02', lane: 2, n: 3, gap: 1.2, at: 0.8 }] }
+            {
+              delay: 5,
+              spawns: [
+                { e: 'enemy_02', lane: 1, n: 4, gap: 1.5, at: 0 }
+              ]
+            },
+            {
+              delay: 6,
+              spawns: [
+                { e: 'enemy_02', lane: 0, n: 3, gap: 1.5, at: 0 },
+                { e: 'enemy_02', lane: 2, n: 3, gap: 1.5, at: 0.8 }
+              ]
+            },
+            {
+              delay: 7,
+              spawns: [
+                { e: 'enemy_01', lane: 1, n: 3, gap: 3, at: 0 },
+                { e: 'enemy_02', lane: 1, n: 3, gap: 1.5, at: 4 }
+              ]
+            },
+            {
+              delay: 7,
+              spawns: [
+                { e: 'enemy_02', lane: 0, n: 3, gap: 1.2, at: 0 },
+                { e: 'enemy_02', lane: 1, n: 3, gap: 1.2, at: 0.4 },
+                { e: 'enemy_02', lane: 2, n: 3, gap: 1.2, at: 0.8 }
+              ]
+            }
           ],
           rewards: {
             clear: { coins: 120, exp: 85 },
@@ -514,13 +871,43 @@
           }
         },
         {
-          id: '1-5', name: '苔石守門', pos: { x: 72, y: 21 }, statMul: 1.25, recommendLv: 7, costCap: 46,
+          id: '1-5',
+          name: '苔石守門',
+          pos: { x: 72, y: 21 },
+          statMul: 1.25,
+          recommendLv: 7,
+          costCap: 46,
           tip: '菁英青苔岩非常耐打，用草屬性精靈攻擊效果最好。',
           waves: [
-            { delay: 5, spawns: [{ e: 'enemy_01', lane: 1, n: 3, gap: 3, at: 0 }, { e: 'enemy_02', lane: 0, n: 2, gap: 2, at: 2 }] },
-            { delay: 7, spawns: [{ e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 0 }, { e: 'enemy_01', lane: 2, n: 3, gap: 3, at: 2 }] },
-            { delay: 8, spawns: [{ e: 'enemy_02', lane: 0, n: 3, gap: 1.5, at: 0 }, { e: 'enemy_02', lane: 2, n: 3, gap: 1.5, at: 0.5 }] },
-            { delay: 8, spawns: [{ e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 0, elite: true }, { e: 'enemy_01', lane: 0, n: 2, gap: 3, at: 3 }, { e: 'enemy_01', lane: 2, n: 2, gap: 3, at: 3 }] }
+            {
+              delay: 5,
+              spawns: [
+                { e: 'enemy_01', lane: 1, n: 3, gap: 3, at: 0 },
+                { e: 'enemy_02', lane: 0, n: 2, gap: 2, at: 2 }
+              ]
+            },
+            {
+              delay: 7,
+              spawns: [
+                { e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 0 },
+                { e: 'enemy_01', lane: 2, n: 3, gap: 3, at: 2 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_02', lane: 0, n: 3, gap: 1.5, at: 0 },
+                { e: 'enemy_02', lane: 2, n: 3, gap: 1.5, at: 0.5 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 0, elite: true },
+                { e: 'enemy_01', lane: 0, n: 2, gap: 3, at: 3 },
+                { e: 'enemy_01', lane: 2, n: 2, gap: 3, at: 3 }
+              ]
+            }
           ],
           rewards: {
             clear: { coins: 160, exp: 100 },
@@ -528,19 +915,52 @@
             threeStar: { dew: 8, mats: { mat_03: 2 } }
           }
         }
-      ]
+      ],
+      battlefield: 'ch1'
     },
     {
-      id: 'ch2', name: '青苔溪谷', desc: '溪水潺潺的谷地，石頭上長滿了打盹的青苔。', background: 'battle',
+      id: 'ch2',
+      name: '迷霧苔原',
+      desc: '兩條小徑在霧裡交會，合流處有一汪微光泉水。',
       stages: [
         {
-          id: '2-1', name: '苔橋入口', pos: { x: 70, y: 76 }, statMul: 1.35, recommendLv: 9, costCap: 48,
-          tip: '肉盾後面常跟著快速小怪，別讓守護被拖住。',
+          id: '2-1',
+          name: '苔橋入口',
+          pos: { x: 70, y: 76 },
+          statMul: 1.35,
+          recommendLv: 9,
+          costCap: 48,
+          tip: '分裂果凍被打倒會變成 2 隻小果凍，別讓牠們溜過去。',
           waves: [
-            { delay: 5, spawns: [{ e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 0 }, { e: 'enemy_02', lane: 1, n: 3, gap: 1.5, at: 4 }] },
-            { delay: 7, spawns: [{ e: 'enemy_01', lane: 0, n: 3, gap: 2.5, at: 0 }, { e: 'enemy_01', lane: 2, n: 3, gap: 2.5, at: 1 }] },
-            { delay: 8, spawns: [{ e: 'enemy_03', lane: 0, n: 1, gap: 0, at: 0 }, { e: 'enemy_03', lane: 2, n: 1, gap: 0, at: 3 }] },
-            { delay: 8, spawns: [{ e: 'enemy_02', lane: 0, n: 3, gap: 1.2, at: 0 }, { e: 'enemy_02', lane: 1, n: 3, gap: 1.2, at: 0.5 }, { e: 'enemy_02', lane: 2, n: 3, gap: 1.2, at: 1 }] }
+            {
+              delay: 5,
+              spawns: [
+                { e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 0 },
+                { e: 'enemy_02', lane: 1, n: 3, gap: 1.5, at: 4 }
+              ]
+            },
+            {
+              delay: 7,
+              spawns: [
+                { e: 'enemy_01', lane: 0, n: 3, gap: 2.5, at: 0 },
+                { e: 'enemy_07', lane: 2, n: 2, gap: 3, at: 1 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_03', lane: 0, n: 1, gap: 0, at: 0 },
+                { e: 'enemy_03', lane: 2, n: 1, gap: 0, at: 3 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_02', lane: 0, n: 3, gap: 1.2, at: 0 },
+                { e: 'enemy_02', lane: 1, n: 3, gap: 1.2, at: 0.5 },
+                { e: 'enemy_02', lane: 2, n: 3, gap: 1.2, at: 1 }
+              ]
+            }
           ],
           rewards: {
             clear: { coins: 180, exp: 150 },
@@ -549,13 +969,44 @@
           }
         },
         {
-          id: '2-2', name: '打盹岩群', pos: { x: 38, y: 64 }, statMul: 1.45, recommendLv: 11, costCap: 50,
-          tip: '一整群青苔岩慢慢靠近，集中火力逐一擊破。',
+          id: '2-2',
+          name: '打盹岩群',
+          pos: { x: 38, y: 64 },
+          statMul: 1.45,
+          recommendLv: 11,
+          costCap: 50,
+          tip: '飛行蒲公英會飄過守護型頭頂，記得派遠程精靈。',
           waves: [
-            { delay: 5, spawns: [{ e: 'enemy_03', lane: 0, n: 2, gap: 5, at: 0 }] },
-            { delay: 6, spawns: [{ e: 'enemy_03', lane: 2, n: 2, gap: 5, at: 0 }, { e: 'enemy_01', lane: 1, n: 3, gap: 3, at: 2 }] },
-            { delay: 8, spawns: [{ e: 'enemy_03', lane: 1, n: 2, gap: 4, at: 0 }, { e: 'enemy_02', lane: 0, n: 3, gap: 1.5, at: 3 }, { e: 'enemy_02', lane: 2, n: 3, gap: 1.5, at: 3 }] },
-            { delay: 9, spawns: [{ e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 0, elite: true }, { e: 'enemy_03', lane: 0, n: 1, gap: 0, at: 4 }, { e: 'enemy_03', lane: 2, n: 1, gap: 0, at: 4 }] }
+            {
+              delay: 5,
+              spawns: [
+                { e: 'enemy_03', lane: 0, n: 2, gap: 5, at: 0 }
+              ]
+            },
+            {
+              delay: 6,
+              spawns: [
+                { e: 'enemy_03', lane: 2, n: 2, gap: 5, at: 0 },
+                { e: 'enemy_01', lane: 1, n: 3, gap: 3, at: 2 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_03', lane: 1, n: 2, gap: 4, at: 0 },
+                { e: 'enemy_02', lane: 0, n: 3, gap: 1.5, at: 3 },
+                { e: 'enemy_02', lane: 2, n: 3, gap: 1.5, at: 3 },
+                { e: 'enemy_06', lane: 1, n: 3, gap: 2, at: 1 }
+              ]
+            },
+            {
+              delay: 9,
+              spawns: [
+                { e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 0, elite: true },
+                { e: 'enemy_03', lane: 0, n: 1, gap: 0, at: 4 },
+                { e: 'enemy_03', lane: 2, n: 1, gap: 0, at: 4 }
+              ]
+            }
           ],
           rewards: {
             clear: { coins: 200, exp: 170 },
@@ -564,13 +1015,43 @@
           }
         },
         {
-          id: '2-3', name: '花粉風口', pos: { x: 64, y: 48 }, statMul: 1.55, recommendLv: 13, costCap: 52,
-          tip: '噴嚏花粉團會讓阻擋者持續掉血，記得配置療癒精靈。',
+          id: '2-3',
+          name: '花粉風口',
+          pos: { x: 64, y: 48 },
+          statMul: 1.55,
+          recommendLv: 13,
+          costCap: 52,
+          tip: '護盾岩龜的泡泡破掉前很難打痛，用技能集中火力；花粉團記得配療癒。',
           waves: [
-            { delay: 5, spawns: [{ e: 'enemy_04', lane: 1, n: 2, gap: 4, at: 0 }] },
-            { delay: 7, spawns: [{ e: 'enemy_04', lane: 0, n: 2, gap: 4, at: 0 }, { e: 'enemy_01', lane: 2, n: 3, gap: 2.5, at: 1 }] },
-            { delay: 8, spawns: [{ e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 0 }, { e: 'enemy_04', lane: 1, n: 2, gap: 3, at: 3 }] },
-            { delay: 8, spawns: [{ e: 'enemy_04', lane: 0, n: 2, gap: 3, at: 0 }, { e: 'enemy_04', lane: 2, n: 2, gap: 3, at: 1 }, { e: 'enemy_02', lane: 1, n: 4, gap: 1.2, at: 2 }] }
+            {
+              delay: 5,
+              spawns: [
+                { e: 'enemy_04', lane: 1, n: 2, gap: 4, at: 0 }
+              ]
+            },
+            {
+              delay: 7,
+              spawns: [
+                { e: 'enemy_04', lane: 0, n: 2, gap: 4, at: 0 },
+                { e: 'enemy_01', lane: 2, n: 3, gap: 2.5, at: 1 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 0 },
+                { e: 'enemy_04', lane: 1, n: 2, gap: 3, at: 3 },
+                { e: 'enemy_08', lane: 0, n: 1, gap: 0, at: 1 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_04', lane: 0, n: 2, gap: 3, at: 0 },
+                { e: 'enemy_04', lane: 2, n: 2, gap: 3, at: 1 },
+                { e: 'enemy_02', lane: 1, n: 4, gap: 1.2, at: 2 }
+              ]
+            }
           ],
           rewards: {
             clear: { coins: 220, exp: 190 },
@@ -579,14 +1060,53 @@
           }
         },
         {
-          id: '2-4', name: '溪谷迴廊', pos: { x: 45, y: 33 }, statMul: 1.65, recommendLv: 15, costCap: 54,
+          id: '2-4',
+          name: '溪谷迴廊',
+          pos: { x: 45, y: 33 },
+          statMul: 1.65,
+          recommendLv: 15,
+          costCap: 54,
           tip: '四種怪物混合出現，五波連續進攻。',
           waves: [
-            { delay: 5, spawns: [{ e: 'enemy_01', lane: 0, n: 3, gap: 2.5, at: 0 }, { e: 'enemy_02', lane: 2, n: 3, gap: 1.5, at: 1 }] },
-            { delay: 7, spawns: [{ e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 0 }, { e: 'enemy_04', lane: 1, n: 1, gap: 0, at: 3 }] },
-            { delay: 7, spawns: [{ e: 'enemy_04', lane: 0, n: 2, gap: 3, at: 0 }, { e: 'enemy_04', lane: 2, n: 2, gap: 3, at: 0 }] },
-            { delay: 8, spawns: [{ e: 'enemy_02', lane: 0, n: 4, gap: 1, at: 0 }, { e: 'enemy_02', lane: 1, n: 4, gap: 1, at: 0.5 }, { e: 'enemy_02', lane: 2, n: 4, gap: 1, at: 1 }] },
-            { delay: 9, spawns: [{ e: 'enemy_03', lane: 0, n: 1, gap: 0, at: 0 }, { e: 'enemy_03', lane: 2, n: 1, gap: 0, at: 0 }, { e: 'enemy_04', lane: 1, n: 3, gap: 2.5, at: 2 }] }
+            {
+              delay: 5,
+              spawns: [
+                { e: 'enemy_01', lane: 0, n: 3, gap: 2.5, at: 0 },
+                { e: 'enemy_02', lane: 2, n: 3, gap: 1.5, at: 1 }
+              ]
+            },
+            {
+              delay: 7,
+              spawns: [
+                { e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 0 },
+                { e: 'enemy_04', lane: 1, n: 1, gap: 0, at: 3 }
+              ]
+            },
+            {
+              delay: 7,
+              spawns: [
+                { e: 'enemy_04', lane: 0, n: 2, gap: 3, at: 0 },
+                { e: 'enemy_04', lane: 2, n: 2, gap: 3, at: 0 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_02', lane: 0, n: 4, gap: 1, at: 0 },
+                { e: 'enemy_02', lane: 1, n: 4, gap: 1, at: 0.5 },
+                { e: 'enemy_02', lane: 2, n: 4, gap: 1, at: 1 },
+                { e: 'enemy_07', lane: 1, n: 2, gap: 2, at: 2 }
+              ]
+            },
+            {
+              delay: 9,
+              spawns: [
+                { e: 'enemy_03', lane: 0, n: 1, gap: 0, at: 0 },
+                { e: 'enemy_03', lane: 2, n: 1, gap: 0, at: 0 },
+                { e: 'enemy_04', lane: 1, n: 3, gap: 2.5, at: 2 },
+                { e: 'enemy_06', lane: 2, n: 3, gap: 1.5, at: 1 }
+              ]
+            }
           ],
           rewards: {
             clear: { coins: 240, exp: 215 },
@@ -595,13 +1115,43 @@
           }
         },
         {
-          id: '2-5', name: '雷雲前哨', pos: { x: 72, y: 21 }, statMul: 1.75, recommendLv: 17, costCap: 58,
-          tip: '雷雲王的分身（HP 50%）出現！小心範圍震盪，夥伴別擠在一起。',
+          id: '2-5',
+          name: '古木守門',
+          pos: { x: 72, y: 21 },
+          statMul: 1.75,
+          recommendLv: 17,
+          costCap: 58,
+          tip: '古木樹樁會不斷喚來小栗球，先清小怪再集中火力；左側泉水格能幫守護回血。',
           waves: [
-            { delay: 5, spawns: [{ e: 'enemy_01', lane: 0, n: 3, gap: 2.5, at: 0 }, { e: 'enemy_01', lane: 2, n: 3, gap: 2.5, at: 0 }] },
-            { delay: 7, spawns: [{ e: 'enemy_04', lane: 1, n: 2, gap: 3, at: 0 }, { e: 'enemy_02', lane: 0, n: 3, gap: 1.2, at: 2 }] },
-            { delay: 8, spawns: [{ e: 'enemy_03', lane: 0, n: 1, gap: 0, at: 0 }, { e: 'enemy_03', lane: 2, n: 1, gap: 0, at: 2 }] },
-            { delay: 10, spawns: [{ e: 'enemy_05', lane: 1, n: 1, gap: 0, at: 0, hpMul: 0.5 }, { e: 'enemy_02', lane: 0, n: 3, gap: 2, at: 6 }, { e: 'enemy_02', lane: 2, n: 3, gap: 2, at: 6 }] }
+            {
+              delay: 5,
+              spawns: [
+                { e: 'enemy_01', lane: 0, n: 3, gap: 2.5, at: 0 },
+                { e: 'enemy_01', lane: 2, n: 3, gap: 2.5, at: 0 }
+              ]
+            },
+            {
+              delay: 7,
+              spawns: [
+                { e: 'enemy_04', lane: 1, n: 2, gap: 3, at: 0 },
+                { e: 'enemy_02', lane: 0, n: 3, gap: 1.2, at: 2 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_03', lane: 0, n: 1, gap: 0, at: 0 },
+                { e: 'enemy_03', lane: 2, n: 1, gap: 0, at: 2 }
+              ]
+            },
+            {
+              delay: 10,
+              spawns: [
+                { e: 'enemy_09', lane: 1, n: 1, gap: 0, at: 0 },
+                { e: 'enemy_02', lane: 0, n: 3, gap: 2, at: 6 },
+                { e: 'enemy_02', lane: 2, n: 3, gap: 2, at: 6 }
+              ]
+            }
           ],
           rewards: {
             clear: { coins: 300, exp: 250 },
@@ -609,19 +1159,54 @@
             threeStar: { dew: 10, mats: { mat_03: 4 } }
           }
         }
-      ]
+      ],
+      battlefield: 'ch2'
     },
     {
-      id: 'ch3', name: '微光花海', desc: '入夜後會發出微光的花海，雷雲王就住在最深處。', background: 'battle',
+      id: 'ch3',
+      name: '雷雲山谷',
+      desc: '劈啪作響的靜電籠罩山谷，水屬性夥伴格外有精神。',
       stages: [
         {
-          id: '3-1', name: '花海邊境', pos: { x: 70, y: 76 }, statMul: 1.85, recommendLv: 19, costCap: 58,
-          tip: '花粉團與迷霧雲交錯進攻，療癒覆蓋要夠廣。',
+          id: '3-1',
+          name: '花海邊境',
+          pos: { x: 70, y: 76 },
+          statMul: 1.85,
+          recommendLv: 19,
+          costCap: 58,
+          tip: '靜電天氣讓水屬性精靈攻速 +15%；飛行蒲公英要靠遠程處理。',
           waves: [
-            { delay: 5, spawns: [{ e: 'enemy_04', lane: 1, n: 2, gap: 3, at: 0 }, { e: 'enemy_01', lane: 0, n: 3, gap: 2.5, at: 1 }] },
-            { delay: 7, spawns: [{ e: 'enemy_01', lane: 2, n: 4, gap: 2, at: 0 }, { e: 'enemy_04', lane: 0, n: 2, gap: 3, at: 2 }] },
-            { delay: 8, spawns: [{ e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 0, elite: true }, { e: 'enemy_02', lane: 0, n: 3, gap: 1.2, at: 3 }, { e: 'enemy_02', lane: 2, n: 3, gap: 1.2, at: 3 }] },
-            { delay: 8, spawns: [{ e: 'enemy_04', lane: 0, n: 2, gap: 2.5, at: 0 }, { e: 'enemy_04', lane: 1, n: 2, gap: 2.5, at: 0.5 }, { e: 'enemy_04', lane: 2, n: 2, gap: 2.5, at: 1 }] }
+            {
+              delay: 5,
+              spawns: [
+                { e: 'enemy_04', lane: 1, n: 2, gap: 3, at: 0 },
+                { e: 'enemy_01', lane: 0, n: 3, gap: 2.5, at: 1 }
+              ]
+            },
+            {
+              delay: 7,
+              spawns: [
+                { e: 'enemy_01', lane: 2, n: 4, gap: 2, at: 0 },
+                { e: 'enemy_04', lane: 0, n: 2, gap: 3, at: 2 },
+                { e: 'enemy_06', lane: 1, n: 3, gap: 1.8, at: 2 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 0, elite: true },
+                { e: 'enemy_02', lane: 0, n: 3, gap: 1.2, at: 3 },
+                { e: 'enemy_02', lane: 2, n: 3, gap: 1.2, at: 3 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_04', lane: 0, n: 2, gap: 2.5, at: 0 },
+                { e: 'enemy_04', lane: 1, n: 2, gap: 2.5, at: 0.5 },
+                { e: 'enemy_04', lane: 2, n: 2, gap: 2.5, at: 1 }
+              ]
+            }
           ],
           rewards: {
             clear: { coins: 300, exp: 300 },
@@ -630,13 +1215,44 @@
           }
         },
         {
-          id: '3-2', name: '噴嚏花田', pos: { x: 38, y: 64 }, statMul: 1.95, recommendLv: 21, costCap: 60,
+          id: '3-2',
+          name: '噴嚏花田',
+          pos: { x: 38, y: 64 },
+          statMul: 1.95,
+          recommendLv: 21,
+          costCap: 60,
           tip: '整片花田都在打噴嚏！可以讓守護輪流上場分攤傷害。',
           waves: [
-            { delay: 5, spawns: [{ e: 'enemy_04', lane: 0, n: 3, gap: 2.5, at: 0 }, { e: 'enemy_04', lane: 2, n: 3, gap: 2.5, at: 1 }] },
-            { delay: 7, spawns: [{ e: 'enemy_04', lane: 1, n: 4, gap: 2, at: 0 }] },
-            { delay: 8, spawns: [{ e: 'enemy_03', lane: 0, n: 1, gap: 0, at: 0 }, { e: 'enemy_03', lane: 2, n: 1, gap: 0, at: 0 }, { e: 'enemy_04', lane: 1, n: 3, gap: 2, at: 2 }] },
-            { delay: 8, spawns: [{ e: 'enemy_04', lane: 1, n: 1, gap: 0, at: 0, elite: true }, { e: 'enemy_02', lane: 0, n: 4, gap: 1, at: 2 }, { e: 'enemy_02', lane: 2, n: 4, gap: 1, at: 2 }] }
+            {
+              delay: 5,
+              spawns: [
+                { e: 'enemy_04', lane: 0, n: 3, gap: 2.5, at: 0 },
+                { e: 'enemy_04', lane: 2, n: 3, gap: 2.5, at: 1 }
+              ]
+            },
+            {
+              delay: 7,
+              spawns: [
+                { e: 'enemy_04', lane: 1, n: 4, gap: 2, at: 0 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_03', lane: 0, n: 1, gap: 0, at: 0 },
+                { e: 'enemy_03', lane: 2, n: 1, gap: 0, at: 0 },
+                { e: 'enemy_04', lane: 1, n: 3, gap: 2, at: 2 },
+                { e: 'enemy_07', lane: 1, n: 2, gap: 2, at: 1 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_04', lane: 1, n: 1, gap: 0, at: 0, elite: true },
+                { e: 'enemy_02', lane: 0, n: 4, gap: 1, at: 2 },
+                { e: 'enemy_02', lane: 2, n: 4, gap: 1, at: 2 }
+              ]
+            }
           ],
           rewards: {
             clear: { coins: 330, exp: 330 },
@@ -645,14 +1261,54 @@
           }
         },
         {
-          id: '3-3', name: '螢光窪地', pos: { x: 64, y: 48 }, statMul: 2.05, recommendLv: 23, costCap: 62,
+          id: '3-3',
+          name: '螢光窪地',
+          pos: { x: 64, y: 48 },
+          statMul: 2.05,
+          recommendLv: 23,
+          costCap: 62,
           tip: '大量高速怪從窪地湧出，五波不間斷。',
           waves: [
-            { delay: 5, spawns: [{ e: 'enemy_02', lane: 0, n: 4, gap: 1, at: 0 }, { e: 'enemy_02', lane: 2, n: 4, gap: 1, at: 0.5 }] },
-            { delay: 6, spawns: [{ e: 'enemy_01', lane: 1, n: 4, gap: 2, at: 0 }, { e: 'enemy_02', lane: 1, n: 3, gap: 1, at: 5 }] },
-            { delay: 7, spawns: [{ e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 0 }, { e: 'enemy_02', lane: 0, n: 4, gap: 1, at: 2 }, { e: 'enemy_02', lane: 2, n: 4, gap: 1, at: 2 }] },
-            { delay: 7, spawns: [{ e: 'enemy_04', lane: 0, n: 2, gap: 2.5, at: 0 }, { e: 'enemy_04', lane: 2, n: 2, gap: 2.5, at: 0 }, { e: 'enemy_01', lane: 1, n: 3, gap: 2, at: 1 }] },
-            { delay: 8, spawns: [{ e: 'enemy_02', lane: 0, n: 5, gap: 0.8, at: 0 }, { e: 'enemy_02', lane: 1, n: 5, gap: 0.8, at: 0.4 }, { e: 'enemy_02', lane: 2, n: 5, gap: 0.8, at: 0.8 }, { e: 'enemy_02', lane: 1, n: 1, gap: 0, at: 5, elite: true }] }
+            {
+              delay: 5,
+              spawns: [
+                { e: 'enemy_02', lane: 0, n: 4, gap: 1, at: 0 },
+                { e: 'enemy_02', lane: 2, n: 4, gap: 1, at: 0.5 }
+              ]
+            },
+            {
+              delay: 6,
+              spawns: [
+                { e: 'enemy_01', lane: 1, n: 4, gap: 2, at: 0 },
+                { e: 'enemy_02', lane: 1, n: 3, gap: 1, at: 5 }
+              ]
+            },
+            {
+              delay: 7,
+              spawns: [
+                { e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 0 },
+                { e: 'enemy_02', lane: 0, n: 4, gap: 1, at: 2 },
+                { e: 'enemy_02', lane: 2, n: 4, gap: 1, at: 2 }
+              ]
+            },
+            {
+              delay: 7,
+              spawns: [
+                { e: 'enemy_04', lane: 0, n: 2, gap: 2.5, at: 0 },
+                { e: 'enemy_04', lane: 2, n: 2, gap: 2.5, at: 0 },
+                { e: 'enemy_01', lane: 1, n: 3, gap: 2, at: 1 },
+                { e: 'enemy_06', lane: 1, n: 4, gap: 1.2, at: 0 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_02', lane: 0, n: 5, gap: 0.8, at: 0 },
+                { e: 'enemy_02', lane: 1, n: 5, gap: 0.8, at: 0.4 },
+                { e: 'enemy_02', lane: 2, n: 5, gap: 0.8, at: 0.8 },
+                { e: 'enemy_02', lane: 1, n: 1, gap: 0, at: 5, elite: true }
+              ]
+            }
           ],
           rewards: {
             clear: { coins: 360, exp: 360 },
@@ -661,14 +1317,55 @@
           }
         },
         {
-          id: '3-4', name: '雷鳴高台', pos: { x: 45, y: 33 }, statMul: 2.15, recommendLv: 25, costCap: 64,
+          id: '3-4',
+          name: '雷鳴高台',
+          pos: { x: 45, y: 33 },
+          statMul: 2.15,
+          recommendLv: 25,
+          costCap: 64,
           tip: '決戰前的最後防線，雙菁英青苔岩同時壓境。',
           waves: [
-            { delay: 5, spawns: [{ e: 'enemy_03', lane: 0, n: 1, gap: 0, at: 0 }, { e: 'enemy_03', lane: 2, n: 1, gap: 0, at: 0 }, { e: 'enemy_01', lane: 1, n: 3, gap: 2.5, at: 2 }] },
-            { delay: 7, spawns: [{ e: 'enemy_04', lane: 1, n: 3, gap: 2.5, at: 0 }, { e: 'enemy_02', lane: 0, n: 3, gap: 1.2, at: 1 }, { e: 'enemy_02', lane: 2, n: 3, gap: 1.2, at: 1 }] },
-            { delay: 8, spawns: [{ e: 'enemy_03', lane: 0, n: 1, gap: 0, at: 0, elite: true }, { e: 'enemy_03', lane: 2, n: 1, gap: 0, at: 0, elite: true }] },
-            { delay: 8, spawns: [{ e: 'enemy_04', lane: 0, n: 2, gap: 2, at: 0 }, { e: 'enemy_04', lane: 2, n: 2, gap: 2, at: 0 }, { e: 'enemy_01', lane: 1, n: 4, gap: 1.8, at: 1 }] },
-            { delay: 8, spawns: [{ e: 'enemy_02', lane: 0, n: 4, gap: 1, at: 0 }, { e: 'enemy_02', lane: 1, n: 4, gap: 1, at: 0.3 }, { e: 'enemy_02', lane: 2, n: 4, gap: 1, at: 0.6 }, { e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 5 }] }
+            {
+              delay: 5,
+              spawns: [
+                { e: 'enemy_03', lane: 0, n: 1, gap: 0, at: 0 },
+                { e: 'enemy_03', lane: 2, n: 1, gap: 0, at: 0 },
+                { e: 'enemy_01', lane: 1, n: 3, gap: 2.5, at: 2 }
+              ]
+            },
+            {
+              delay: 7,
+              spawns: [
+                { e: 'enemy_04', lane: 1, n: 3, gap: 2.5, at: 0 },
+                { e: 'enemy_02', lane: 0, n: 3, gap: 1.2, at: 1 },
+                { e: 'enemy_02', lane: 2, n: 3, gap: 1.2, at: 1 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_03', lane: 0, n: 1, gap: 0, at: 0, elite: true },
+                { e: 'enemy_03', lane: 2, n: 1, gap: 0, at: 0, elite: true },
+                { e: 'enemy_08', lane: 1, n: 2, gap: 3, at: 2 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_04', lane: 0, n: 2, gap: 2, at: 0 },
+                { e: 'enemy_04', lane: 2, n: 2, gap: 2, at: 0 },
+                { e: 'enemy_01', lane: 1, n: 4, gap: 1.8, at: 1 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_02', lane: 0, n: 4, gap: 1, at: 0 },
+                { e: 'enemy_02', lane: 1, n: 4, gap: 1, at: 0.3 },
+                { e: 'enemy_02', lane: 2, n: 4, gap: 1, at: 0.6 },
+                { e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 5 }
+              ]
+            }
           ],
           rewards: {
             clear: { coins: 390, exp: 400 },
@@ -677,13 +1374,50 @@
           }
         },
         {
-          id: '3-5', name: '氣噗噗雷雲王', pos: { x: 72, y: 21 }, statMul: 2.25, recommendLv: 27, costCap: 70,
+          id: '3-5',
+          name: '氣噗噗雷雲王',
+          pos: { x: 72, y: 21 },
+          statMul: 2.25,
+          recommendLv: 27,
+          costCap: 70,
           tip: '最終戰！水屬性精靈對雷雲王特別有效；狂怒後震盪更頻繁。',
           waves: [
-            { delay: 5, spawns: [{ e: 'enemy_01', lane: 0, n: 3, gap: 2, at: 0 }, { e: 'enemy_01', lane: 2, n: 3, gap: 2, at: 0 }, { e: 'enemy_04', lane: 1, n: 2, gap: 3, at: 2 }] },
-            { delay: 7, spawns: [{ e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 0 }, { e: 'enemy_02', lane: 0, n: 4, gap: 1, at: 2 }, { e: 'enemy_02', lane: 2, n: 4, gap: 1, at: 2 }] },
-            { delay: 8, spawns: [{ e: 'enemy_04', lane: 0, n: 2, gap: 2.5, at: 0 }, { e: 'enemy_04', lane: 2, n: 2, gap: 2.5, at: 0 }, { e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 3, elite: true }] },
-            { delay: 12, spawns: [{ e: 'enemy_05', lane: 1, n: 1, gap: 0, at: 0 }, { e: 'enemy_01', lane: 0, n: 3, gap: 4, at: 8 }, { e: 'enemy_01', lane: 2, n: 3, gap: 4, at: 8 }, { e: 'enemy_02', lane: 0, n: 3, gap: 2, at: 20 }, { e: 'enemy_02', lane: 2, n: 3, gap: 2, at: 20 }] }
+            {
+              delay: 5,
+              spawns: [
+                { e: 'enemy_01', lane: 0, n: 3, gap: 2, at: 0 },
+                { e: 'enemy_01', lane: 2, n: 3, gap: 2, at: 0 },
+                { e: 'enemy_04', lane: 1, n: 2, gap: 3, at: 2 }
+              ]
+            },
+            {
+              delay: 7,
+              spawns: [
+                { e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 0 },
+                { e: 'enemy_02', lane: 0, n: 4, gap: 1, at: 2 },
+                { e: 'enemy_02', lane: 2, n: 4, gap: 1, at: 2 },
+                { e: 'enemy_06', lane: 1, n: 3, gap: 1.5, at: 4 }
+              ]
+            },
+            {
+              delay: 8,
+              spawns: [
+                { e: 'enemy_04', lane: 0, n: 2, gap: 2.5, at: 0 },
+                { e: 'enemy_04', lane: 2, n: 2, gap: 2.5, at: 0 },
+                { e: 'enemy_03', lane: 1, n: 1, gap: 0, at: 3, elite: true },
+                { e: 'enemy_08', lane: 1, n: 1, gap: 0, at: 6 }
+              ]
+            },
+            {
+              delay: 12,
+              spawns: [
+                { e: 'enemy_05', lane: 1, n: 1, gap: 0, at: 0 },
+                { e: 'enemy_01', lane: 0, n: 3, gap: 4, at: 8 },
+                { e: 'enemy_01', lane: 2, n: 3, gap: 4, at: 8 },
+                { e: 'enemy_02', lane: 0, n: 3, gap: 2, at: 20 },
+                { e: 'enemy_02', lane: 2, n: 3, gap: 2, at: 20 }
+              ]
+            }
           ],
           rewards: {
             clear: { coins: 450, exp: 450 },
@@ -691,14 +1425,15 @@
             threeStar: { dew: 15, summonTicket: 1, mats: { mat_03: 6 } }
           }
         }
-      ]
+      ],
+      battlefield: 'ch3'
     }
   ];
 
   // 無盡模式：通關 3-5（普通）後解鎖；漏到泉水之心歸零即結束（無懲罰）
   const ENDLESS_MODE = {
     id: 'endless', name: '無盡晨霧', unlock: { stageClear: '3-5', difficulty: 'normal' },
-    background: 'battle', lives: 5,
+    battlefield: 'ch1', lives: 5,
     waveInterval: 8,                     // 每波之間間隔（秒）
     scaling: {                           // 第 w 波（從 1 開始）的怪物倍率，線性成長避免後期暴衝
       hpPerWave: 0.12,                   // HP 倍率 = statBase × (1 + 0.12 × (w − 1))
@@ -712,13 +1447,16 @@
         { e: 'enemy_01', weight: 30, fromWave: 1 },
         { e: 'enemy_02', weight: 30, fromWave: 1 },
         { e: 'enemy_03', weight: 15, fromWave: 3 },
-        { e: 'enemy_04', weight: 20, fromWave: 4 }
+        { e: 'enemy_04', weight: 20, fromWave: 4 },
+        { e: 'enemy_07', weight: 14, fromWave: 5 },
+        { e: 'enemy_06', weight: 12, fromWave: 6 },
+        { e: 'enemy_08', weight: 10, fromWave: 8 }
       ]
     },
     eliteEvery: 5,                       // 每 5 波：加 1 隻菁英青苔岩
     eliteEnemy: 'enemy_03',
     bossEvery: 10,                       // 每 10 波：雷雲王，HP 倍率 = 0.5 + 0.1 × (第幾次 Boss − 1)，上限 1.5
-    bossEnemy: 'enemy_05',
+    bossEnemies: ['enemy_09', 'enemy_05'],   // 第 10、30…波古木樹樁；第 20、40…波雷雲王
     bossHpMul: { start: 0.5, step: 0.1, max: 1.5 },
     rewards: {
       perWave: { coinsBase: 30, coinsPerWave: 5, exp: 40 },   // 第 w 波星塵 = 30 + 5w
@@ -734,128 +1472,82 @@
   };
 
   /* ---------------------------------------------------------------
-   * 8. MAZE_MAPS — 6 張 5×5 機關迷宮（皆已用 BFS 驗證有解，par = 最短步數）
+   * 8. TRAIL — 森林奇遇步道（取代方格迷宮）
+   * 每次出發消耗 5 露水，共 6 層；每層從左／右兩個節點擇一前進，走完 6 層後開啟終點寶箱
+   * 獎勵中的 [最少, 最多] 會隨機取整數；mats.random 表示從 forageMatPool 隨機挑素材
    * --------------------------------------------------------------- */
-  const MAZE_RULES = {
-    legend: {
-      'S': '起點',
-      'G': '出口（晨露泉）',
-      '.': '草地',
-      '#': '樹叢（不可通行）',
-      'k': '晨露鑰匙（踩到即拾取，可累積）',
-      'D': '木柵門（消耗 1 把鑰匙永久開啟）',
-      's': '石板（踩上去後，全部藤蔓門永久退開）',
-      'V': '藤蔓門（踩過石板後才能通行）',
-      'p': '螢光拉桿（每次踏上時切換全部花瓣閘門）',
-      'X': '花瓣閘門・初始關閉（拉桿切換後開啟）',
-      'O': '花瓣閘門・初始開啟（拉桿切換後關閉）',
-      'B': '苔石方塊（可推動 1 格）',
-      'h': '苔石壓板（所有壓板上都有方塊時，根鬚閘門開啟）',
-      'Y': '根鬚閘門（壓板全部被方塊壓住時才開啟）',
-      'T': '傳送樹洞（成對出現；走進一個會從另一個鑽出來）',
-      'm': '素材（拾取 1 個，種類見 pickupMats）',
-      'w': '露珠（拾取 1 露水）',
-      'c': '寶箱（每張地圖只能開一次，內容見 rewards.chest）'
-    },
-    rules: [
-      '每次移動上下左右 1 格，計為 1 步；鑽樹洞不另計步。',
-      '迷霧：一開始只看得到起點周圍，走過的格子周圍 1 圈會散開；出口會在迷霧中微微發光。',
-      '方塊只能被推進「草地／起點／壓板」，不可推進門、閘門、石板、樹洞、拾取物、出口或其他方塊。',
-      '玩家站在壓板上不算壓住，必須是方塊。',
-      '所有拉桿共用同一組開關狀態。',
-      '拾取的素材與露珠在抵達出口時入袋：首次通關必得；重玩時每張地圖每天第一次通關可得。',
-      '提供「上一步」與「重新開始」，不扣任何資源。'
+  const TRAIL = {
+    name: '森林奇遇步道', bg: 'trail', costDew: 5, layers: 6,
+    unlock: { stageClear: '1-1' },
+    revealPct: 60,                          // 每個節點有 60% 機率事先看得到事件類型，其餘顯示「？」
+    // 節點座標（bg_trail.png 百分比），由下往上：起點 → 第 1~6 層
+    layout: { start: { x: 50, y: 93 }, layerY: [81, 70, 59, 48, 37, 26], leftX: 30, rightX: 70, jitterX: 5, final: { x: 50, y: 12 } },
+    forageMatPool: ['mat_01', 'mat_02', 'mat_03'],
+    events: [
+      { type: 'forage', name: '森林拾穫', icon: 'mat', weight: 34, desc: '撿到一大把素材和元氣森果！',
+        reward: { mats: { random: [3, 6] }, items: { item_exp_berry: [1, 2] } } },
+      { type: 'chest', name: '步道寶箱', icon: 'chest', weight: 22, desc: '藤蔓下藏著一個小寶箱…',
+        table: [
+          { weight: 30, reward: { items: { item_evo_stone: 1 }, coins: 60 } },
+          { weight: 15, reward: { items: { item_shiny_charm: 1 }, coins: 60 } },
+          { weight: 55, reward: { items: { item_exp_berry: 2 }, coins: 90 } }
+        ] },
+      { type: 'traveler', name: '森林旅人', icon: 'traveler', weight: 20, desc: '背著大背包的旅人願意用精靈碎片交換一點星塵。',
+        costCoins: 60, shards: 1, declineGift: { items: { item_exp_berry: 1 } } },
+      { type: 'blessing', name: '林間祝福', icon: 'blessing', weight: 16, desc: '樹葉間灑下溫暖的光，下一場戰鬥會更順利。',
+        options: [
+          { id: 'atk',    name: '奮起祝福', desc: '下一場戰鬥全隊攻擊 +15%', atkPct: 15 },
+          { id: 'energy', name: '露珠祝福', desc: '下一場戰鬥開場能量 +10', energy: 10 },
+          { id: 'guard',  name: '守護祝福', desc: '下一場戰鬥全隊受到傷害 −15%', dmgDownPct: 15 }
+        ] },
+      { type: 'rest', name: '樹蔭小憩', icon: 'rest', weight: 8, desc: '在樹蔭下休息一下，撿到幾顆露珠。',
+        reward: { dew: [2, 4], coins: [20, 40] } }
     ],
-    stars: [
-      { star: 3, desc: '步數 ≤ par' },
-      { star: 2, desc: '步數 ≤ par + bonusSteps' },
-      { star: 1, desc: '抵達出口' }
-    ],
-    fogRadius: 1,                                          // 走過格子周圍 1 圈（含斜角）散開
-    unlock: { easy: '1-2', normal: '2-1', hard: '3-1' }    // 通關該普通關卡後解鎖對應難度
+    finalChest: {
+      name: '步道終點寶箱',
+      table: [
+        { weight: 40, reward: { items: { item_evo_stone: 1 }, coins: 120 } },
+        { weight: 20, reward: { items: { item_shiny_charm: 1 }, coins: 120 } },
+        { weight: 40, reward: { items: { item_exp_berry: 3 }, coins: 150, mats: { random: [2, 3] } } }
+      ]
+    }
   };
 
-  // par 為不撿拾取物的最短步數（已用 BFS 驗證；想撿素材就要繞路，三星與收集需要取捨）
-  const MAZE_MAPS = [
-    {
-      id: 'maze_e1', difficulty: 'easy', name: '石板與藤蔓', par: 12, bonusSteps: 4,
-      grid: [
-        'S.##w',
-        '..#G.',
-        '..##V',
-        '.....',
-        'm.#.s'
-      ],
-      pickupMats: ['mat_01', 'mat_02'],
-      hint: '右下角的石板能讓藤蔓門退開。',
-      rewards: { first: { dew: 5, coins: 100, mats: { mat_02: 2 } }, threeStar: { dew: 3 }, dailyReplay: { coins: 40 } }
+  // 三星關卡一鍵掃蕩：每次花 3 露水，直接取得通關獎勵、經驗與一次掉落判定（不含首通與三星獎勵）
+  const SWEEP = { costDew: 3 };
+
+  // 營地奇遇與上班族貼心功能
+  const CAMP_EVENTS = {
+    // 記步數兌換露水時，隨機一隻營地精靈冒泡回饋
+    walkFeedback: {
+      giftPct: 45, gift: { items: { item_exp_berry: 1 } },
+      giftLines: ['散步時撿到一顆森果，送給你！', '我也跟著走了好多步，這個給你～', '路邊的森果紅通通的，分你一顆！'],
+      lines: ['今天也走了好多路，辛苦了！', '腳痠痠的話記得伸展一下喔', '一起慢慢走，就會走很遠～', '有你在，營火都變暖了', '今天的露水亮晶晶的！']
     },
-    {
-      id: 'maze_e2', difficulty: 'easy', name: '樹洞捷徑', par: 10, bonusSteps: 4,
-      grid: [
-        'S.#G.',
-        '#.#w.',
-        '#..#.',
-        'm.#..',
-        '#T.#T'
+    // 漂流木信瓶：待在營地時不定時漂到草地上
+    bottle: {
+      firstDelaySec: [40, 90], intervalSec: [150, 360], dailyMax: 6,
+      area: { x0: 22, x1: 78, y0: 58, y1: 80 },          // bg_camp.png 百分比
+      gifts: [
+        { weight: 40, reward: { coins: [30, 80] } },
+        { weight: 30, reward: { dew: [1, 3] } },
+        { weight: 20, reward: { items: { item_exp_berry: 1 } } },
+        { weight: 10, reward: { mats: { random: [1, 2] } } }
       ],
-      pickupMats: ['mat_01', 'mat_02'],
-      hint: '左下的樹洞和右下的樹洞是連通的。',
-      rewards: { first: { dew: 5, coins: 100, mats: { mat_01: 2 } }, threeStar: { dew: 3 }, dailyReplay: { coins: 40 } }
+      messages: [
+        '今天辛苦了，記得喝口水、讓肩膀放鬆一下。',
+        '不用每件事都做到完美，你已經很棒了。',
+        '下班路上看看天空吧，雲一直都在慢慢走。',
+        '把今天交給營火，明天再出發就好。',
+        '有人默默謝謝你今天的認真。',
+        '慢慢來，比較快。',
+        '今晚早點睡，夢裡的森林也很溫柔。'
+      ]
     },
-    {
-      id: 'maze_n1', difficulty: 'normal', name: '雙閘水門', par: 12, bonusSteps: 4,
-      grid: [
-        'S..Xk',
-        '##p#.',
-        'GOD..',
-        '##.#.',
-        '#c.m.'
-      ],
-      pickupMats: ['mat_02', 'mat_03'],
-      hint: '拿到鑰匙後，得再拉一次拉桿才能讓出口前的閘門重新打開。',
-      rewards: { first: { dew: 8, coins: 200, mats: { mat_02: 3, mat_03: 1 } }, threeStar: { dew: 5 }, dailyReplay: { coins: 60 }, chest: { coins: 80, mats: { mat_03: 1 } } }
-    },
-    {
-      id: 'maze_n2', difficulty: 'normal', name: '螢光樹洞', par: 16, bonusSteps: 4,
-      grid: [
-        'S#GX#',
-        '.T#..',
-        '.#pV.',
-        '.w#..',
-        's#m.T'
-      ],
-      pickupMats: ['mat_01', 'mat_03'],
-      hint: '先踩左下的石板，再鑽樹洞到右邊；拉桿會打開出口前的花瓣閘門。',
-      rewards: { first: { dew: 8, coins: 200, mats: { mat_01: 3, mat_03: 1 } }, threeStar: { dew: 5 }, dailyReplay: { coins: 60 } }
-    },
-    {
-      id: 'maze_h1', difficulty: 'hard', name: '苔石樹洞', par: 29, bonusSteps: 6,
-      grid: [
-        'S....',
-        'V.h..',
-        '#B#.m',
-        'w.T#T',
-        's.YG#'
-      ],
-      pickupMats: ['mat_01', 'mat_02', 'mat_03'],
-      hint: '先鑽樹洞繞到苔石下方把它往上推，再踩石板打開左邊藤蔓門，從門那側把苔石推上壓板。',
-      rewards: { first: { dew: 12, coins: 350, summonTicket: 1, mats: { mat_01: 4, mat_03: 2 } }, threeStar: { dew: 8 }, dailyReplay: { coins: 90 } }
-    },
-    {
-      id: 'maze_h2', difficulty: 'hard', name: '雷雲機關庫', par: 27, bonusSteps: 6,
-      grid: [
-        'S.hB.',
-        '...D.',
-        '.#p##',
-        'X.Y.G',
-        '.kO.m'
-      ],
-      pickupMats: ['mat_01', 'mat_02', 'mat_03'],
-      hint: '鑰匙、拉桿、壓板全都要用上；先想好拉桿要拉幾次。',
-      rewards: { first: { dew: 12, coins: 350, summonTicket: 1, mats: { mat_02: 4, mat_03: 2 } }, threeStar: { dew: 8 }, dailyReplay: { coins: 90 } }
-    }
-  ];
+    // 下班收成籃：離線超過 1 小時，營火旁出現籃子，一鍵領取離線露水與素材
+    basket: { minOfflineHours: 1, pos: { x: 64, y: 42 }, hoursPerMat: 2, maxMats: 6 },
+    zen: { hint: '點一下畫面回到營地' }
+  };
 
   /* ---------------------------------------------------------------
    * 9. CRAFT_RECIPES — 3 種裝備（每隻精靈 3 個欄位各裝 1 件）
@@ -1001,7 +1693,7 @@
     { id: 'dq_summon',  name: '召喚新夥伴', desc: '進行 1 次召喚',           type: 'summon',        target: 1,    activity: 10, rewards: { coins: 100 } },
     { id: 'dq_feed',    name: '露水餵養',   desc: '餵養精靈 1 次',           type: 'feed',          target: 1,    activity: 10, rewards: { coins: 100 } },
     { id: 'dq_craft',   name: '工坊時光',   desc: '合成 1 件裝備',           type: 'craft',         target: 1,    activity: 15, rewards: { mats: { mat_01: 2, mat_02: 2 } } },
-    { id: 'dq_maze',    name: '解開機關',   desc: '通過任意 1 張迷宮',       type: 'mazeClear',     target: 1,    activity: 15, rewards: { mats: { mat_03: 1 }, coins: 100 } },
+    { id: 'dq_trail',   name: '林間散步',   desc: '走完 1 次森林奇遇步道',   type: 'trailRun',      target: 1,    activity: 15, rewards: { mats: { mat_03: 1 }, coins: 100 } },
     { id: 'dq_skill',   name: '技能大師',   desc: '戰鬥中施放技能 10 次',    type: 'skillCast',     target: 10,   activity: 10, rewards: { coins: 150 } },
     { id: 'dq_endless', name: '霧中試煉',   desc: '無盡模式抵達第 5 波',     type: 'endlessWave',   target: 5,    activity: 10, rewards: { dew: 2 }, unlock: { stageClear: '3-5' } }
   ];
@@ -1048,9 +1740,10 @@
     META, ASSETS,
     ELEMENTS, ELEMENT_MULTIPLIER, ROLES, RARITIES, CURRENCIES, MATERIALS,
     ECONOMY, SUMMON, STAR_RULES, LEVEL_RULES, BATTLE_RULES,
+    ITEMS, SHINY, EVOLUTION, BATTLEFIELDS,
     PETS, ENEMIES, ELITE_MODIFIER,
     DIFFICULTY, CHAPTERS, ENDLESS_MODE,
-    MAZE_RULES, MAZE_MAPS,
+    TRAIL, SWEEP, CAMP_EVENTS,
     EQUIP_SLOTS, CRAFT_QUALITIES, SUBSTAT_POOL, CRAFT_RECIPES,
     CAMP_BUILDINGS,
     DAILY_QUESTS, DAILY_ACTIVITY_CHESTS,
